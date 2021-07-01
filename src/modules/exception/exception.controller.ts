@@ -1,9 +1,10 @@
 import { ExceptionService } from './exception.service'
 import { Body, Controller, Delete, Get, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { HelloService } from '../hello/hello.service'
 
 @Controller('exception')
 export class ExceptionController {
-    constructor(private readonly exceptionService:ExceptionService){}
+    constructor(private readonly exceptionService:ExceptionService, private readonly helloService: HelloService){}
 
     @Get('/list')
     list(@Query('id', new ParseIntPipe()) id){
@@ -34,5 +35,10 @@ export class ExceptionController {
     @Delete('/delete')
     delete(@Query('id') id){
         return this.exceptionService.delete(id);
+    }
+
+    @Get('hello/list')
+    helloList(@Query() params){
+        return this.helloService.list();
     }
 }

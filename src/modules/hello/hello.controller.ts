@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseIntPipe, Post, Put, Query, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { HelloService } from './hello.service'
 
 @Controller('hello')
@@ -8,6 +8,8 @@ export class HelloController {
     @Get('/list')
     list(@Query() params){
         let id:number | undefined = params.id;
+        //throw new HttpException({status: HttpStatus.BAD_REQUEST, message: 'http错误', error: 'http请求错误'}, HttpStatus.BAD_REQUEST);
+        throw new Error('bad request');
         if(id==null){
             return this.helloService.list();
         }
