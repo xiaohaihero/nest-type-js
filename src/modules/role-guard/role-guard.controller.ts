@@ -1,6 +1,9 @@
 import { Body, Controller, Post, UseGuards, Get, Query } from '@nestjs/common';
 import { RoleGuardsService } from './role-guard.service'
 import { RoleGuardGuard } from '../../common/guards/role-guard.guard'
+import { Roles } from 'src/common/decorator/roles.decorator';
+import { RoleEnum } from '../../lib/role.enum'
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('role-guards')
 export class RoleGuardsController {
@@ -15,7 +18,8 @@ export class RoleGuardsController {
     }
 
     @Get('/list')
-    @UseGuards(RoleGuardGuard)
+    @UseGuards(AuthGuard('jwt'), RoleGuardGuard)
+    @Roles({roles: 'auth', module: 'user', action: 'view'})
     list(@Query('id') id){
         return this.roleGuardsService.list(id);
     }

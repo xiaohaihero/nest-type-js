@@ -1,8 +1,12 @@
 import { ExceptionService } from './exception.service'
-import { Body, Controller, Delete, Get, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HelloService } from '../hello/hello.service'
+import { AuthGuard } from '@nestjs/passport'
+import { Roles } from 'src/common/decorator/roles.decorator';
+import { RoleEnum } from '../../lib/role.enum'
 
 @Controller('exception')
+@UseGuards(AuthGuard())
 export class ExceptionController {
     constructor(private readonly exceptionService:ExceptionService, private readonly helloService: HelloService){}
 
@@ -18,6 +22,7 @@ export class ExceptionController {
     }
 
     @Post('/create')
+    @Roles(RoleEnum.Admin)
     create(@Body() data){
         let name:string = data.name;
         let age:number = data.age;

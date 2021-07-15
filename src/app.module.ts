@@ -3,10 +3,18 @@ import { HelloModule } from './modules/hello/hello.module'
 import { ExceptionModule } from './modules/exception/exception.module'
 import { LoggerMiddleware } from './common/middleware/logger.middleware'
 import { RoleGuardsModule } from './modules/role-guard/role-guard.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 
 
 @Module({
-  imports:[HelloModule, ExceptionModule, RoleGuardsModule]
+  imports:[
+    HelloModule, 
+    ExceptionModule, 
+    RoleGuardsModule, 
+    AuthModule, 
+    UsersModule
+  ]
 })
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer){
