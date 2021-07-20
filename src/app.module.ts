@@ -5,6 +5,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware'
 import { RoleGuardsModule } from './modules/role-guard/role-guard.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { MongooseModule } from '@nestjs/mongoose'
 
 
 @Module({
@@ -13,7 +14,8 @@ import { UsersModule } from './modules/users/users.module';
     ExceptionModule, 
     RoleGuardsModule, 
     AuthModule, 
-    UsersModule
+    UsersModule,
+    MongooseModule.forRoot('mongodb://localhost/nest',{ 'useCreateIndex': true })
   ]
 })
 export class AppModule implements NestModule{
