@@ -1,5 +1,7 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema } from 'mongoose';
+let md5 = require('../../utils/md5');
+
 // export type UserDocument = User & Document;
 
 // @Schema()
@@ -73,6 +75,7 @@ export const UserSchema = new Schema({
   passWord: {
     type: Schema.Types.String,
     required: true,
+    select: false,
     Comment: '密码'
   },
   phone: {
@@ -89,7 +92,7 @@ export const UserSchema = new Schema({
   },
   lockTime: {
     type: Schema.Types.Date,
-    default: Date.now(),
+    default: Date.now,
     Comment: '锁定时间'
   },
   errNum: {
@@ -105,3 +108,5 @@ export const UserSchema = new Schema({
 }, {
   timestamps: true
 });
+
+UserSchema.path('passWord').set( value => md5(value))

@@ -1,8 +1,8 @@
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import _ from 'lodash';
 import { Logger } from '@nestjs/common';
+import { EntityModelServiceException } from './exceptions';
 import ModelEntity from '../entity/ModelEntity';
-import { User } from 'src/modules/users/users.schema';
 
 const logger = new Logger();
 
@@ -46,15 +46,16 @@ export default abstract class EntityModelService<T extends ModelEntity> implemen
     try {
       params.dateCreated = Date.now();
       params.dateUpdated = params.dateCreated;
-      const instances = await this.getEntityModel().insertMany([params]);
-      if (!!instances) {
+      const instances: T[] = await this.getEntityModel().insertMany([params]);
+      if (!!instances && instances.length === 1) {
         return instances[0];
       }
       return null;
     } catch (e) {
       if (Object.keys(e).indexOf('code') !== -1) {
-        throw new Error(
-          e.message
+        throw new EntityModelServiceException(
+          e.code,
+          _.get(e, 'errmsg', 'Unknown Error')
         );
       }
       throw e;
@@ -66,7 +67,7 @@ export default abstract class EntityModelService<T extends ModelEntity> implemen
       delete tmpParams._id;
     }
     tmpParams.dateUpdated = Date.now();
-    //const result = await this.getEntityModel().updateOne({_id: instanceId}, tmpParams);
+    const result = await this.getEntityModel().updateOne({_id: instanceId}, tmpParams);
     return await this.details(instanceId);
   }
   public async delete(instanceId: string) {
@@ -74,7 +75,7 @@ export default abstract class EntityModelService<T extends ModelEntity> implemen
     if (!instance) {
       return null;
     }
-    //await this.getEntityModel().deleteOne({_id: instanceId});
+    await this.getEntityModel().deleteOne({_id: instanceId});
     return instance;
   }
 }

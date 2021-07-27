@@ -3,25 +3,28 @@ import { Model, FilterQuery } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { user } from './user.interface';
 import { AuthService } from '../auth/auth.service'
+let md5 = require('../../utils/md5');
+
+import EntityModelService from '../../services/entity.model.services'
+
 
 @Injectable()
-export class UsersService {
+export class UsersService extends EntityModelService<user>{
 
   constructor(
     @InjectModel('User') private userModel: Model<user>,
     private readonly authService: AuthService
-  ) { }
-
-  public getEntityModel(): Model<user> {
-    return this.userModel;
+  ) {
+    super();
   }
 
   async login(account: String, passWord: String) {
-    let user = await this.userModel.findOne({ "account": account });
+    let user = await this.getEntityModel().findOne({ "account": account });
     if (!user) {
       return false
     }
-    if (user.passWord != passWord) {
+    let md5Pwd = md5(passWord);
+    if (user.passWord != md5Pwd) {
       return false
     }
     return {
@@ -29,23 +32,7 @@ export class UsersService {
     };
   }
 
-  async create(User: user) {
-    let result = await this.userModel.create(User);
-    return result
-  }
-
-  async findOne(username: string) {
-    let query = {
-      name: username
-    } as FilterQuery<user>
-    return await this.getEntityModel().findOne(query);
-  }
-
-  async list(params: Object): Promise<user[]> {
-    return await this.userModel.find(params);
-  }
-
-  async deleteOne(user) {
-    return this.userModel.deleteOne(user);
+  getEntityModel(): Model<user>{
+    return this.userModel;
   }
 }
